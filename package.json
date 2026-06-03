@@ -1,0 +1,10 @@
+{
+  "name": "vectorshift-pipeline",
+  "private": true,
+  "scripts": {
+    "gitingest": "bash scripts/gitingest.sh",
+    "gitingest:stdout": "gitingest . -o -",
+    "frontend:start": "npm --prefix frontend start",
+    "frontend:build": "npm --prefix frontend build"
+  }
+}

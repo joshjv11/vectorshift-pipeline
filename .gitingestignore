@@ -1,0 +1,12 @@
+node_modules/
+frontend/node_modules/
+frontend/build/
+ingest/
+*.zip
+.DS_Store
+**/DS_Store
+__pycache__/
+.venv/
+venv/
+coverage/
+*.log

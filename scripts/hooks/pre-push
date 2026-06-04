@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Block pushes to teamnuvoro (or any non-joshjv11 GitHub remote).
+
+blocked_pattern='github\.com[:/]teamnuvoro/'
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  for url in $(git remote -v | awk '/\(push\)/ {print $2}' | sort -u); do
+    if [[ "$url" =~ $blocked_pattern ]]; then
+      echo "Blocked: refusing to push to teamnuvoro remote ($url)."
+      echo "This project only uses joshjv11/vectorshift-pipeline."
+      exit 1
+    fi
+  done
+done
+
+exit 0

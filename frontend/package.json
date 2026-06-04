@@ -11,6 +11,7 @@
     "react-scripts": "5.0.1",
     "react-textarea-autosize": "^8.5.9",
     "reactflow": "^11.8.3",
+    "sonner": "^2.0.7",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

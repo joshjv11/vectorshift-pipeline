@@ -2,9 +2,16 @@
   "name": "vectorshift-pipeline",
   "private": true,
   "scripts": {
+    "dev": "bash scripts/dev.sh",
+    "start": "npm run dev",
     "gitingest": "bash scripts/gitingest.sh",
     "gitingest:stdout": "bash scripts/gitingest.sh --stdout",
+    "setup:hooks": "bash scripts/install-git-hooks.sh",
+    "backend:start": "bash scripts/start-backend.sh",
     "frontend:start": "npm --prefix frontend start",
     "frontend:build": "npm --prefix frontend build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }

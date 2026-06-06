@@ -34,6 +34,18 @@ export const useStore = create(
           nodes: [...get().nodes, node],
         });
       },
+      // Single source of truth for node creation, shared by canvas drop and
+      // click/keyboard-to-add from the palette. Cascades position when none given.
+      addNodeOfType: (type, position) => {
+        const id = get().getNodeID(type);
+        const count = get().nodes.length;
+        const pos = position ?? {
+          x: 280 + (count % 6) * 36,
+          y: 100 + (count % 6) * 36,
+        };
+        get().addNode({ id, type, position: pos, data: { id, nodeType: type } });
+        return id;
+      },
       onNodesChange: (changes) => {
         set({
           nodes: applyNodeChanges(changes, get().nodes),

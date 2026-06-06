@@ -30,6 +30,26 @@ describe('addNode / updateNodeField', () => {
   });
 });
 
+describe('addNodeOfType', () => {
+  test('creates a typed node with an id, data, and position', () => {
+    const id = useStore.getState().addNodeOfType('text');
+    const { nodes } = useStore.getState();
+    expect(id).toBe('text-1');
+    expect(nodes).toHaveLength(1);
+    expect(nodes[0]).toMatchObject({
+      id: 'text-1',
+      type: 'text',
+      data: { id: 'text-1', nodeType: 'text' },
+    });
+    expect(nodes[0].position).toEqual(expect.objectContaining({ x: expect.any(Number) }));
+  });
+
+  test('honors an explicit position (canvas drop)', () => {
+    useStore.getState().addNodeOfType('llm', { x: 42, y: 99 });
+    expect(useStore.getState().nodes[0].position).toEqual({ x: 42, y: 99 });
+  });
+});
+
 describe('onConnect validation', () => {
   test('adds a valid edge with styling metadata', () => {
     useStore.getState().onConnect({

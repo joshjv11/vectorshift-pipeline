@@ -1,8 +1,11 @@
 import { Position } from 'reactflow';
 import TextareaAutosize from 'react-textarea-autosize';
 import { BaseNode } from './BaseNode';
+import { NODE_META } from './nodeColors';
 import { useNodeField } from '../hooks/useNodeField';
 import { fieldGroupClass, fieldLabelClass, textareaClass } from './nodeStyles';
+
+const { accent } = NODE_META.promptTemplate;
 
 export const PromptTemplateNode = ({ id, data }) => {
   const [template, setTemplate] = useNodeField(
@@ -14,6 +17,7 @@ export const PromptTemplateNode = ({ id, data }) => {
   return (
     <BaseNode
       title="Prompt Template"
+      accentColor={accent}
       style={{ minHeight: 120 }}
       handles={[
         {

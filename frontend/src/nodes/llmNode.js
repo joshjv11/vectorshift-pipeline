@@ -1,11 +1,15 @@
 import { Position } from 'reactflow';
 import { BaseNode } from './BaseNode';
+import { NODE_META } from './nodeColors';
+
+const { accent } = NODE_META.llm;
 
 export const LLMNode = ({ id }) => {
   return (
     <BaseNode
       title="LLM"
-      style={{ minHeight: 96 }}
+      accentColor={accent}
+      style={{ minHeight: 100 }}
       handles={[
         {
           type: 'target',
@@ -30,7 +34,9 @@ export const LLMNode = ({ id }) => {
         },
       ]}
     >
-      <p className="text-xs leading-relaxed text-gray-500">Connect system and prompt inputs, then route the model response downstream.</p>
+      <p className="text-xs leading-relaxed text-gray-500">
+        Connect system and prompt inputs, then route the model response downstream.
+      </p>
     </BaseNode>
   );
 };

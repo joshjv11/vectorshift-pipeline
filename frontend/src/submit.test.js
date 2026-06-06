@@ -45,7 +45,7 @@ test('shows a success toast for a valid DAG', async () => {
 
   await waitFor(() => expect(toast.success).toHaveBeenCalledTimes(1));
   const [, opts] = toast.success.mock.calls[0];
-  expect(opts.description).toContain('Valid DAG: Yes');
+  expect(opts.description).toContain('DAG: Yes');
 });
 
 test('warns and names the cycle when the graph is cyclic', async () => {

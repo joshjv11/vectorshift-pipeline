@@ -3,9 +3,12 @@ import { Position } from 'reactflow';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useStore } from '../store';
 import { BaseNode } from './BaseNode';
+import { NODE_META } from './nodeColors';
 import { fieldGroupClass, fieldLabelClass, textareaClass } from './nodeStyles';
 import { computeTextNodeWidth, parseTextVariables } from './textVariables';
 import { useNodeField } from '../hooks/useNodeField';
+
+const { accent } = NODE_META.text;
 
 export const TextNode = ({ id, data }) => {
   const setTextNodeVariables = useStore((state) => state.setTextNodeVariables);
@@ -45,6 +48,7 @@ export const TextNode = ({ id, data }) => {
   return (
     <BaseNode
       title="Text"
+      accentColor={accent}
       handles={handles}
       style={{ width: nodeWidth, minHeight: 96 }}
     >

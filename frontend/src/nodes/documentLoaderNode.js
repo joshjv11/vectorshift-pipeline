@@ -1,7 +1,10 @@
 import { Position } from 'reactflow';
 import { BaseNode } from './BaseNode';
+import { NODE_META } from './nodeColors';
 import { useNodeField } from '../hooks/useNodeField';
 import { fieldGroupClass, fieldLabelClass, inputClass, selectClass } from './nodeStyles';
+
+const { accent } = NODE_META.documentLoader;
 
 export const DocumentLoaderNode = ({ id, data }) => {
   const [loaderType, setLoaderType] = useNodeField(id, 'loaderType', data?.loaderType || 'PDF');
@@ -10,6 +13,7 @@ export const DocumentLoaderNode = ({ id, data }) => {
   return (
     <BaseNode
       title="Document Loader"
+      accentColor={accent}
       style={{ minHeight: 120 }}
       handles={[
         {

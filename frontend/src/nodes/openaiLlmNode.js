@@ -1,7 +1,10 @@
 import { Position } from 'reactflow';
 import { BaseNode } from './BaseNode';
+import { NODE_META } from './nodeColors';
 import { useNodeField } from '../hooks/useNodeField';
 import { fieldGroupClass, fieldLabelClass, inputClass, selectClass } from './nodeStyles';
+
+const { accent } = NODE_META.openaiLlm;
 
 export const OpenAI_LLMNode = ({ id, data }) => {
   const [model, setModel] = useNodeField(id, 'model', data?.model || 'gpt-4');
@@ -15,6 +18,7 @@ export const OpenAI_LLMNode = ({ id, data }) => {
   return (
     <BaseNode
       title="OpenAI LLM"
+      accentColor={accent}
       style={{ minHeight: 120 }}
       handles={[
         {

@@ -1,7 +1,10 @@
 import { Position } from 'reactflow';
 import { BaseNode } from './BaseNode';
+import { NODE_META } from './nodeColors';
 import { useNodeField } from '../hooks/useNodeField';
 import { fieldGroupClass, fieldLabelClass, inputClass, selectClass } from './nodeStyles';
+
+const { accent } = NODE_META.vectorStore;
 
 export const VectorStoreNode = ({ id, data }) => {
   const [storeType, setStoreType] = useNodeField(id, 'storeType', data?.storeType || 'Chroma');
@@ -10,6 +13,7 @@ export const VectorStoreNode = ({ id, data }) => {
   return (
     <BaseNode
       title="Vector Store"
+      accentColor={accent}
       style={{ minHeight: 120 }}
       handles={[
         {

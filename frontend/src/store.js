@@ -35,13 +35,17 @@ export const useStore = create(
         });
       },
       // Single source of truth for node creation, shared by canvas drop and
-      // click/keyboard-to-add from the palette. Cascades position when none given.
+      // click/keyboard-to-add from the palette.
+      // Auto-placement lays nodes out in a grid (4 per row, 260 × 160 px spacing)
+      // so click-added nodes never overlap.
       addNodeOfType: (type, position) => {
         const id = get().getNodeID(type);
         const count = get().nodes.length;
+        const col = count % 4;
+        const row = Math.floor(count / 4);
         const pos = position ?? {
-          x: 280 + (count % 6) * 36,
-          y: 100 + (count % 6) * 36,
+          x: 60 + col * 280,
+          y: 60 + row * 180,
         };
         get().addNode({ id, type, position: pos, data: { id, nodeType: type } });
         return id;

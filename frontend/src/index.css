@@ -2,16 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Base ─────────────────────────────────────────────────── */
+html, body, #root {
+  height: 100%;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* ── React Flow: selected node ring ─────────────────────── */
+.react-flow__node.selected > div {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2), 0 4px 12px -2px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ── React Flow: connection line ────────────────────────── */
+.react-flow__connection-line {
+  stroke: #6366f1;
+  stroke-width: 2;
+}
+
+/* ── React Flow: invalid connection line ────────────────── */
+.react-flow__connection-path.animated {
+  animation: dash 0.5s linear infinite;
+}
+
+/* ── React Flow: handle on hover ────────────────────────── */
+.react-flow__handle:hover {
+  transform: scale(1.4);
+  transition: transform 0.15s ease;
+}
+
+/* ── Smooth node dragging ───────────────────────────────── */
+.react-flow__node {
+  transition: filter 0.15s ease;
+}
+.react-flow__node:hover {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
 }

@@ -1,5 +1,7 @@
 # VectorShift Pipeline Builder
 
+[![CI](https://github.com/joshjv11/vectorshift-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/joshjv11/vectorshift-pipeline/actions/workflows/ci.yml)
+
 A visual, drag-and-drop editor for building AI/LLM pipelines, built for the
 VectorShift frontend technical assessment. Drag nodes from the palette onto the
 canvas, wire their handles together, configure each node, and submit the
@@ -25,8 +27,28 @@ evenly spaced. Removing a variable prunes any edges that were attached to its
 handle, so serialized output never references dead handles.
 
 **Part 4 — Backend Integration.** `submit.js` POSTs `{ nodes, edges }` to
-`/pipelines/parse`. The FastAPI backend returns `num_nodes`, `num_edges`, and
-`is_dag` (cycle detection via three-color DFS), shown to the user as a toast.
+`/pipelines/parse`. The FastAPI backend returns `num_nodes`, `num_edges`,
+`is_dag`, and — when the graph isn't acyclic — the actual `cycle_path`, plus
+`node_type_counts`, `entry_points`, and `exit_points`. Results are shown to the
+user as a toast (the cycle is named on failure).
+
+## Beyond the brief
+
+These are the parts that take it from "assignment complete" to production-minded:
+
+- **Proactive connection validation** (`graph.js`, wired via React Flow's
+  `isValidConnection`): self-connections, already-occupied target handles, and
+  any edge that would introduce a cycle are rejected live with red-line feedback —
+  the canvas can only ever build a DAG. The store re-checks on `onConnect` as
+  defense-in-depth.
+- **Persistence**: the Zustand store uses the `persist` middleware, so a page
+  refresh restores your pipeline. A **Clear** button (with confirm) resets it.
+- **Tests + CI**: 38 frontend tests (Jest + RTL) and 19 backend tests (pytest)
+  cover the graph algorithms, store actions (incl. edge pruning), node rendering,
+  and the API. GitHub Actions runs both suites plus the production build on every
+  push.
+- **UX details**: empty-state hint, live node/edge counts, keyboard-deletable
+  selections, and ARIA labels on interactive controls.
 
 ## Tech stack
 
@@ -54,21 +76,47 @@ cd frontend && npm install && npm start
 
 The frontend reads `REACT_APP_API_URL` (defaults to `http://localhost:8000`).
 
+## Testing
+
+```bash
+# Frontend (Jest + React Testing Library)
+cd frontend && npm test            # watch mode
+cd frontend && npm run test:ci     # single run (used in CI)
+
+# Backend (pytest)
+cd backend && pip install -r requirements-dev.txt && pytest
+```
+
 ## Project structure
 
 ```
-backend/          FastAPI app + DAG check
+backend/
+  main.py             FastAPI app: DAG check + cycle path + graph stats
+  test_main.py        pytest suite (graph algorithms + endpoints)
 frontend/src/
-  nodes/          BaseNode + 9 node components + shared styles
-  hooks/          useNodeField (local state ↔ Zustand)
-  store.js        Zustand store (nodes, edges, IDs, edge pruning)
-  ui.js           React Flow canvas + drop handling
-  submit.js       POST to /pipelines/parse
-scripts/          dev runner + repo digest generator
+  nodes/              BaseNode + 9 node components + shared styles
+  hooks/              useNodeField (local state ↔ Zustand)
+  graph.js            pure connection-validation helpers (DAG-safe)
+  store.js            Zustand store (persisted; nodes, edges, IDs, pruning)
+  ui.js               React Flow canvas, drop + connection validation
+  submit.js           POST to /pipelines/parse
+  *.test.js           Jest test suites
+.github/workflows/    CI (frontend + backend)
+scripts/              dev runner + repo digest generator
 ```
 
 ## Design notes
 
-- **Edge integrity:** `setTextNodeVariables` removes orphaned edges when a Text node's variables change, keeping store state and the submitted payload consistent.
-- **DRY nodes:** adding a node = one component returning `<BaseNode>` with a `handles` array; no layout/handle code is repeated.
-- **DAG check:** three-color DFS distinguishes a back edge (cycle) from a cross/forward edge, so disconnected components and self-loops are handled correctly.
+- **DAG-by-construction:** `graph.js` validation prevents cycles on the client;
+  the backend independently confirms with three-color DFS and returns the cycle
+  path, so the two layers cross-check each other.
+- **Edge integrity:** `setTextNodeVariables` removes orphaned edges when a Text
+  node's variables change, keeping store state and the submitted payload consistent.
+- **DRY nodes:** adding a node = one component returning `<BaseNode>` with a
+  `handles` array; no layout/handle code is repeated.
+
+## Future work
+
+- Migrate the frontend to TypeScript for end-to-end type safety.
+- Handle-type compatibility matrix (e.g. only allow `documents → vector store`).
+- Backend pipeline execution engine for LangChain-style chains.

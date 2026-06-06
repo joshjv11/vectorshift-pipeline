@@ -19,6 +19,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:ci": "react-scripts test --watchAll=false --passWithNoTests",
+    "format": "prettier --write \"src/**/*.{js,jsx,css}\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,css}\"",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -42,6 +45,7 @@
   "devDependencies": {
     "autoprefixer": "^10.5.0",
     "postcss": "^8.5.15",
+    "prettier": "^3.3.3",
     "tailwindcss": "^3.4.19"
   }
 }

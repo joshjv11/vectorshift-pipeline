@@ -1,19 +1,18 @@
 import { Position } from 'reactflow';
 import { BaseNode } from './BaseNode';
-import { NODE_META } from './nodeColors';
 import { useNodeField } from '../hooks/useNodeField';
 import { fieldGroupClass, fieldLabelClass, inputClass, selectClass } from './nodeStyles';
 
-const { accent } = NODE_META.outputParser;
-
-export const OutputParserNode = ({ id, data }) => {
+export const OutputParserNode = ({ id, data, selected }) => {
   const [parserType, setParserType] = useNodeField(id, 'parserType', data?.parserType || 'String');
   const [schema, setSchema] = useNodeField(id, 'schema', data?.schema || '');
 
   return (
     <BaseNode
       title="Output Parser"
-      accentColor={accent}
+      isSelected={selected}
+      color="rose"
+      nodeType="outputParser"
       style={{ minHeight: 120 }}
       handles={[
         {

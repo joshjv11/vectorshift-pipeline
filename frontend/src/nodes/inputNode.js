@@ -1,12 +1,9 @@
 import { Position } from 'reactflow';
 import { BaseNode } from './BaseNode';
-import { NODE_META } from './nodeColors';
 import { useNodeField } from '../hooks/useNodeField';
 import { fieldGroupClass, fieldLabelClass, inputClass, selectClass } from './nodeStyles';
 
-const { accent } = NODE_META.customInput;
-
-export const InputNode = ({ id, data }) => {
+export const InputNode = ({ id, data, selected }) => {
   const [currName, setCurrName] = useNodeField(
     id,
     'inputName',
@@ -17,7 +14,9 @@ export const InputNode = ({ id, data }) => {
   return (
     <BaseNode
       title="Input"
-      accentColor={accent}
+      isSelected={selected}
+      color="indigo"
+      nodeType="customInput"
       style={{ minHeight: 120 }}
       handles={[
         {

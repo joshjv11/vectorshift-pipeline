@@ -112,3 +112,91 @@ describe('clearPipeline', () => {
     expect(state.nodeIDs).toEqual({});
   });
 });
+
+describe('mcpConnector', () => {
+  test('addNodeOfType creates a typed mcpConnector node', () => {
+    const id = useStore.getState().addNodeOfType('mcpConnector');
+    const { nodes } = useStore.getState();
+    expect(id).toBe('mcpConnector-1');
+    expect(nodes[0]).toMatchObject({
+      id:   'mcpConnector-1',
+      type: 'mcpConnector',
+      data: { id: 'mcpConnector-1', nodeType: 'mcpConnector' },
+    });
+  });
+
+  test('autoConnectToNewNode wires to mcpConnector-query handle', () => {
+    useStore.getState().addNodeOfType('customInput');
+    useStore.getState().autoConnectToNewNode(
+      'customInput-1',
+      'customInput-1-value',
+      'mcpConnector',
+      { x: 400, y: 200 }
+    );
+    const { edges } = useStore.getState();
+    expect(edges).toHaveLength(1);
+    expect(edges[0].targetHandle).toBe('mcpConnector-1-query');
+  });
+
+  test('loadPipeline accepts mcpConnector nodes and sets nodeIDs correctly', () => {
+    const { loadPipeline, getNodeID } = useStore.getState();
+    loadPipeline(
+      [{ id: 'mcpConnector-3', type: 'mcpConnector', data: {} }],
+      []
+    );
+    expect(getNodeID('mcpConnector')).toBe('mcpConnector-4');
+  });
+});
+
+describe('loadPipeline', () => {
+  test('replaces nodes, edges, and id counters atomically', () => {
+    const { addNode, getNodeID, loadPipeline } = useStore.getState();
+    // Pre-populate store with something that should be fully replaced
+    getNodeID('text');
+    addNode({ id: 'text-1', type: 'text', data: {} });
+
+    const newNodes = [
+      { id: 'customInput-1', type: 'customInput', data: {} },
+      { id: 'customInput-2', type: 'customInput', data: {} },
+    ];
+    const newEdges = [{ id: 'e1', source: 'customInput-1', target: 'customInput-2' }];
+    loadPipeline(newNodes, newEdges);
+
+    const state = useStore.getState();
+    expect(state.nodes).toEqual(newNodes);
+    expect(state.edges).toEqual(newEdges);
+    expect(state.nodeIDs).toEqual({ customInput: 2 });
+  });
+
+  test('getNodeID continues from loaded max with no id clash', () => {
+    const { loadPipeline, getNodeID } = useStore.getState();
+    loadPipeline([{ id: 'text-3', type: 'text', data: {} }], []);
+    expect(getNodeID('text')).toBe('text-4');
+  });
+
+  test('loading over existing nodes fully replaces them', () => {
+    const { addNode, loadPipeline } = useStore.getState();
+    addNode({ id: 'llm-1', type: 'llm', data: {} });
+    loadPipeline([{ id: 'text-1', type: 'text', data: {} }], []);
+    const { nodes } = useStore.getState();
+    expect(nodes).toHaveLength(1);
+    expect(nodes[0].id).toBe('text-1');
+  });
+
+  test('handles multi-hyphen type names (robust -N suffix parsing)', () => {
+    const { loadPipeline, getNodeID } = useStore.getState();
+    // 'groqLlm' has no hyphens but this exercises the regex path generically
+    loadPipeline([{ id: 'groqLlm-5', type: 'groqLlm', data: {} }], []);
+    expect(getNodeID('groqLlm')).toBe('groqLlm-6');
+  });
+
+  test('loading an empty pipeline clears all state', () => {
+    const { addNode, loadPipeline } = useStore.getState();
+    addNode({ id: 'text-1', type: 'text', data: {} });
+    loadPipeline([], []);
+    const state = useStore.getState();
+    expect(state.nodes).toEqual([]);
+    expect(state.edges).toEqual([]);
+    expect(state.nodeIDs).toEqual({});
+  });
+});

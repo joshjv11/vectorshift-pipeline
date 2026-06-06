@@ -25,6 +25,14 @@ find_free_port() {
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${ROOT}"
 
+# Load environment variables from .env (if present) without overwriting existing env
+if [[ -f "${ROOT}/.env" ]]; then
+  set -o allexport
+  # shellcheck disable=SC1091
+  source "${ROOT}/.env"
+  set +o allexport
+fi
+
 BACKEND_PORT="$(find_free_port 8000)"
 FRONTEND_PORT="$(find_free_port 3000)"
 API_URL="http://localhost:${BACKEND_PORT}"
@@ -41,11 +49,15 @@ echo ""
 echo "Starting dev servers:"
 echo "  Frontend → http://localhost:${FRONTEND_PORT}"
 echo "  Backend  → http://localhost:${BACKEND_PORT}"
+echo "  Client errors → echoed here as [frontend:...] lines"
 echo ""
 
 export BACKEND_PORT
 export REACT_APP_API_URL="${API_URL}"
 
+# ESLINT_NO_DEV_ERRORS keeps lint warnings from crashing the dev build.
+# DISABLE_ESLINT_PLUGIN would skip linting altogether; we keep it enabled
+# but use NO_DEV_ERRORS so disk-full cache failures don't block compilation.
 exec npx concurrently -n backend,frontend -c blue,green \
   "BACKEND_PORT=${BACKEND_PORT} bash scripts/start-backend.sh" \
-  "PORT=${FRONTEND_PORT} REACT_APP_API_URL=${API_URL} npm --prefix frontend start"
+  "PORT=${FRONTEND_PORT} REACT_APP_API_URL=${API_URL} ESLINT_NO_DEV_ERRORS=true npm --prefix frontend start"

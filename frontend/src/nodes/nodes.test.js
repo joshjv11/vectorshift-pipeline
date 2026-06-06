@@ -8,8 +8,9 @@ import { TextNode } from './textNode';
 import { DocumentLoaderNode } from './documentLoaderNode';
 import { VectorStoreNode } from './vectorStoreNode';
 import { PromptTemplateNode } from './promptTemplateNode';
-import { OpenAI_LLMNode } from './openaiLlmNode';
+import { GroqLLMNode } from './groqLlmNode';
 import { OutputParserNode } from './outputParserNode';
+import { McpNode } from './mcpNode';
 
 const renderInFlow = (ui) =>
   render(<ReactFlowProvider>{ui}</ReactFlowProvider>);
@@ -30,8 +31,9 @@ const cases = [
     <PromptTemplateNode id="promptTemplate-1" data={{}} />,
     'Prompt Template',
   ],
-  ['OpenAI_LLM', <OpenAI_LLMNode id="openaiLlm-1" data={{}} />, 'OpenAI LLM'],
+  ['GroqLLM', <GroqLLMNode id="groqLlm-1" data={{}} />, 'Groq LLM'],
   ['OutputParser', <OutputParserNode id="outputParser-1" data={{}} />, 'Output Parser'],
+  ['McpNode', <McpNode id="mcpConnector-1" data={{}} />, 'MCP Server'],
 ];
 
 describe('node smoke tests', () => {

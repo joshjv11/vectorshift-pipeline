@@ -1,19 +1,18 @@
 import { Position } from 'reactflow';
 import { BaseNode } from './BaseNode';
-import { NODE_META } from './nodeColors';
 import { useNodeField } from '../hooks/useNodeField';
 import { fieldGroupClass, fieldLabelClass, inputClass, selectClass } from './nodeStyles';
 
-const { accent } = NODE_META.documentLoader;
-
-export const DocumentLoaderNode = ({ id, data }) => {
+export const DocumentLoaderNode = ({ id, data, selected }) => {
   const [loaderType, setLoaderType] = useNodeField(id, 'loaderType', data?.loaderType || 'PDF');
   const [filePath, setFilePath] = useNodeField(id, 'filePath', data?.filePath || '');
 
   return (
     <BaseNode
       title="Document Loader"
-      accentColor={accent}
+      isSelected={selected}
+      color="amber"
+      nodeType="documentLoader"
       style={{ minHeight: 120 }}
       handles={[
         {

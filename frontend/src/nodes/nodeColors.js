@@ -1,51 +1,193 @@
-// Shared colour + icon definitions for every node type.
-// Using plain hex values (not Tailwind classes) so Tailwind's JIT
-// doesn't strip them out when referenced dynamically.
-
+/**
+ * NODE_META — per-type metadata used by the sidebar palette, context menu,
+ * and node headers. Includes dark-theme color variants and Material Symbols icons.
+ */
 export const NODE_META = {
   customInput: {
-    accent: '#10b981',   // emerald-500
-    icon:   '↘',
-    label:  'Input',
+    icon:         '↘',
+    label:        'Input',
+    color:        'indigo',
+    materialIcon: 'input',
+    paletteHover: 'hover:text-indigo-300 hover:bg-indigo-500/10 hover:border-indigo-500/30',
+    paletteActive:'text-indigo-300 bg-indigo-500/20 border-indigo-500/50 shadow-[0_0_10px_rgba(99,102,241,0.2)]',
   },
   customOutput: {
-    accent: '#f43f5e',   // rose-500
-    icon:   '↗',
-    label:  'Output',
+    icon:         '↗',
+    label:        'Output',
+    color:        'emerald',
+    materialIcon: 'output',
+    paletteHover: 'hover:text-emerald-300 hover:bg-emerald-500/10 hover:border-emerald-500/30',
+    paletteActive:'text-emerald-300 bg-emerald-500/20 border-emerald-500/50',
   },
   llm: {
-    accent: '#8b5cf6',   // violet-500
-    icon:   '⚡',
-    label:  'LLM',
+    icon:         '⚡',
+    label:        'LLM',
+    color:        'purple',
+    materialIcon: 'psychology',
+    paletteHover: 'hover:text-purple-300 hover:bg-purple-500/10 hover:border-purple-500/30',
+    paletteActive:'text-purple-300 bg-purple-500/20 border-purple-500/50',
   },
-  openaiLlm: {
-    accent: '#a855f7',   // purple-500
-    icon:   '✦',
-    label:  'OpenAI LLM',
+  groqLlm: {
+    icon:         '⚡',
+    label:        'Groq LLM',
+    color:        'purple',
+    materialIcon: 'psychology',
+    paletteHover: 'hover:text-purple-300 hover:bg-purple-500/10 hover:border-purple-500/30',
+    paletteActive:'text-purple-300 bg-purple-500/20 border-purple-500/50',
   },
   text: {
-    accent: '#f59e0b',   // amber-500
-    icon:   'Aa',
-    label:  'Text',
+    icon:         'Aa',
+    label:        'Text',
+    color:        'blue',
+    materialIcon: 'text_fields',
+    paletteHover: 'hover:text-blue-300 hover:bg-blue-500/10 hover:border-blue-500/30',
+    paletteActive:'text-blue-300 bg-blue-500/20 border-blue-500/50',
   },
   documentLoader: {
-    accent: '#3b82f6',   // blue-500
-    icon:   '📄',
-    label:  'Doc Loader',
+    icon:         '📄',
+    label:        'Doc Loader',
+    color:        'amber',
+    materialIcon: 'article',
+    paletteHover: 'hover:text-amber-300 hover:bg-amber-500/10 hover:border-amber-500/30',
+    paletteActive:'text-amber-300 bg-amber-500/20 border-amber-500/50',
   },
   vectorStore: {
-    accent: '#06b6d4',   // cyan-500
-    icon:   '🗄',
-    label:  'Vector Store',
+    icon:         '🗄',
+    label:        'Vector Store',
+    color:        'cyan',
+    materialIcon: 'database',
+    paletteHover: 'hover:text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-500/30',
+    paletteActive:'text-cyan-300 bg-cyan-500/20 border-cyan-500/50',
   },
   promptTemplate: {
-    accent: '#f97316',   // orange-500
-    icon:   '💬',
-    label:  'Prompt',
+    icon:         '💬',
+    label:        'Prompt',
+    color:        'violet',
+    materialIcon: 'chat',
+    paletteHover: 'hover:text-violet-300 hover:bg-violet-500/10 hover:border-violet-500/30',
+    paletteActive:'text-violet-300 bg-violet-500/20 border-violet-500/50',
   },
   outputParser: {
-    accent: '#ec4899',   // pink-500
-    icon:   '⚙',
-    label:  'Parser',
+    icon:         '⚙',
+    label:        'Parser',
+    color:        'rose',
+    materialIcon: 'settings',
+    paletteHover: 'hover:text-rose-300 hover:bg-rose-500/10 hover:border-rose-500/30',
+    paletteActive:'text-rose-300 bg-rose-500/20 border-rose-500/50',
+  },
+  mcpConnector: {
+    icon:         '🔌',
+    label:        'MCP Server',
+    color:        'slate',
+    materialIcon: 'cable',
+    paletteHover: 'hover:text-slate-300 hover:bg-slate-500/10 hover:border-slate-500/30',
+    paletteActive:'text-slate-300 bg-slate-500/20 border-slate-500/50',
+  },
+};
+
+/**
+ * NODE_COLORS — Tailwind class sets for each dark-theme color variant.
+ * Used by BaseNode and palette items. All class strings must be complete
+ * so Tailwind JIT detects them at build time.
+ */
+export const NODE_COLORS = {
+  indigo: {
+    border:          'border-indigo-500/30',
+    shadow:          'shadow-[0_0_15px_rgba(79,70,229,0.12)]',
+    headerGradient:  'from-indigo-500/20',
+    iconColor:       'text-indigo-400',
+    labelColor:      'text-indigo-200/60',
+    selectedBorder:  'border-indigo-500/70',
+    selectedShadow:  'shadow-[0_0_0_2px_rgba(99,102,241,0.25),0_0_20px_rgba(99,102,241,0.1)]',
+    handleSource:    '!border-indigo-400 hover:!shadow-[0_0_8px_rgba(99,102,241,0.7)]',
+    handleTarget:    '!border-white/20 hover:!border-indigo-400',
+  },
+  purple: {
+    border:          'border-purple-500/50',
+    shadow:          'shadow-[0_0_20px_rgba(168,85,247,0.12)]',
+    headerGradient:  'from-purple-500/20 to-indigo-500/10',
+    iconColor:       'text-purple-400',
+    labelColor:      'text-purple-200/60',
+    selectedBorder:  'border-purple-500/70',
+    selectedShadow:  'shadow-[0_0_0_2px_rgba(168,85,247,0.25),0_0_20px_rgba(168,85,247,0.1)]',
+    handleSource:    '!border-purple-400 hover:!shadow-[0_0_8px_rgba(168,85,247,0.7)]',
+    handleTarget:    '!border-white/20 hover:!border-purple-400',
+  },
+  emerald: {
+    border:          'border-white/10',
+    shadow:          'shadow-[0_0_15px_rgba(255,255,255,0.03)]',
+    headerGradient:  'from-emerald-500/10',
+    iconColor:       'text-emerald-400/80',
+    labelColor:      'text-emerald-200/50',
+    selectedBorder:  'border-emerald-500/50',
+    selectedShadow:  'shadow-[0_0_0_2px_rgba(52,211,153,0.2),0_0_20px_rgba(52,211,153,0.08)]',
+    handleSource:    '!border-white/20 hover:!border-emerald-400',
+    handleTarget:    '!border-white/20 hover:!border-emerald-400',
+  },
+  blue: {
+    border:          'border-blue-500/30',
+    shadow:          'shadow-[0_0_15px_rgba(59,130,246,0.1)]',
+    headerGradient:  'from-blue-500/20',
+    iconColor:       'text-blue-400',
+    labelColor:      'text-blue-200/60',
+    selectedBorder:  'border-blue-500/70',
+    selectedShadow:  'shadow-[0_0_0_2px_rgba(96,165,250,0.25),0_0_20px_rgba(96,165,250,0.1)]',
+    handleSource:    '!border-blue-400 hover:!shadow-[0_0_8px_rgba(96,165,250,0.7)]',
+    handleTarget:    '!border-white/20 hover:!border-blue-400',
+  },
+  amber: {
+    border:          'border-amber-500/30',
+    shadow:          'shadow-[0_0_15px_rgba(245,158,11,0.1)]',
+    headerGradient:  'from-amber-500/20',
+    iconColor:       'text-amber-400',
+    labelColor:      'text-amber-200/60',
+    selectedBorder:  'border-amber-500/70',
+    selectedShadow:  'shadow-[0_0_0_2px_rgba(251,191,36,0.25),0_0_20px_rgba(251,191,36,0.1)]',
+    handleSource:    '!border-amber-400 hover:!shadow-[0_0_8px_rgba(251,191,36,0.7)]',
+    handleTarget:    '!border-white/20 hover:!border-amber-400',
+  },
+  cyan: {
+    border:          'border-cyan-500/30',
+    shadow:          'shadow-[0_0_15px_rgba(6,182,212,0.1)]',
+    headerGradient:  'from-cyan-500/20',
+    iconColor:       'text-cyan-400',
+    labelColor:      'text-cyan-200/60',
+    selectedBorder:  'border-cyan-500/70',
+    selectedShadow:  'shadow-[0_0_0_2px_rgba(34,211,238,0.25),0_0_20px_rgba(34,211,238,0.1)]',
+    handleSource:    '!border-cyan-400 hover:!shadow-[0_0_8px_rgba(34,211,238,0.7)]',
+    handleTarget:    '!border-white/20 hover:!border-cyan-400',
+  },
+  violet: {
+    border:          'border-violet-500/30',
+    shadow:          'shadow-[0_0_15px_rgba(139,92,246,0.1)]',
+    headerGradient:  'from-violet-500/20',
+    iconColor:       'text-violet-400',
+    labelColor:      'text-violet-200/60',
+    selectedBorder:  'border-violet-500/70',
+    selectedShadow:  'shadow-[0_0_0_2px_rgba(167,139,250,0.25),0_0_20px_rgba(167,139,250,0.1)]',
+    handleSource:    '!border-violet-400 hover:!shadow-[0_0_8px_rgba(167,139,250,0.7)]',
+    handleTarget:    '!border-white/20 hover:!border-violet-400',
+  },
+  rose: {
+    border:          'border-rose-500/30',
+    shadow:          'shadow-[0_0_15px_rgba(244,63,94,0.1)]',
+    headerGradient:  'from-rose-500/20',
+    iconColor:       'text-rose-400',
+    labelColor:      'text-rose-200/60',
+    selectedBorder:  'border-rose-500/70',
+    selectedShadow:  'shadow-[0_0_0_2px_rgba(251,113,133,0.25),0_0_20px_rgba(251,113,133,0.1)]',
+    handleSource:    '!border-rose-400 hover:!shadow-[0_0_8px_rgba(251,113,133,0.7)]',
+    handleTarget:    '!border-white/20 hover:!border-rose-400',
+  },
+  slate: {
+    border:          'border-slate-500/30',
+    shadow:          'shadow-[0_0_15px_rgba(100,116,139,0.12)]',
+    headerGradient:  'from-slate-500/20',
+    iconColor:       'text-slate-400',
+    labelColor:      'text-slate-200/60',
+    selectedBorder:  'border-slate-500/70',
+    selectedShadow:  'shadow-[0_0_0_2px_rgba(100,116,139,0.25),0_0_20px_rgba(100,116,139,0.1)]',
+    handleSource:    '!border-slate-400 hover:!shadow-[0_0_8px_rgba(100,116,139,0.7)]',
+    handleTarget:    '!border-white/20 hover:!border-slate-400',
   },
 };

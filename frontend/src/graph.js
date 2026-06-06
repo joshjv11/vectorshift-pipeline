@@ -84,8 +84,78 @@ export const wouldCreateCycle = (edges, connection) => {
 };
 
 /**
+ * Maps the terminal segment of a handle ID to a semantic data type.
+ * Handle IDs follow the convention `nodeId-handleName`.
+ *
+ * Full handle catalogue (derived from all node definitions):
+ *   value     → any       (Input source, Output target)
+ *   documents → document  (DocumentLoader source, VectorStore target)
+ *   store     → any       (VectorStore source — retrieval result, accepted by any target)
+ *   prompt    → string    (LLM/GroqLLM target, PromptTemplate source)
+ *   response  → string    (LLM/GroqLLM source, OutputParser target)
+ *   parsed    → json      (OutputParser source)
+ *   system    → string    (LLM/GroqLLM target)
+ *   variables → string    (PromptTemplate target)
+ *   output    → string    (TextNode source)
+ *   input     → string    (TextNode dynamic variable targets)
+ *   query     → string    (McpConnector target)
+ *   context   → string    (McpConnector source)
+ *
+ * @param {string|null|undefined} handleId
+ * @returns {string}
+ */
+const getHandleDataType = (handleId) => {
+  if (!handleId) return 'any';
+  const name = handleId.split('-').pop();
+  const typeMap = {
+    documents: 'document',
+    store:     'any',
+    prompt:    'string',
+    response:  'string',
+    parsed:    'json',
+    value:     'any',
+    system:    'string',
+    variables: 'string',
+    input:     'string',
+    output:    'string',
+    query:     'string',
+    context:   'string',
+  };
+  // Dynamic text-node variable handles (arbitrary names) fall back to 'string'
+  return typeMap[name] ?? 'string';
+};
+
+/**
+ * Two types are compatible if either side accepts anything (`'any'`) or
+ * both sides share the same named type.
+ * @param {string} sourceType
+ * @param {string} targetType
+ * @returns {boolean}
+ */
+const isTypeCompatible = (sourceType, targetType) => {
+  if (sourceType === 'any' || targetType === 'any') return true;
+  return sourceType === targetType;
+};
+
+/**
+ * If the connection would be blocked specifically due to a data-type mismatch,
+ * returns a human-readable error string. Returns null when types are compatible
+ * (or when handles are not provided — other validators handle those cases).
+ * @param {ConnectionLike} connection
+ * @returns {string|null}
+ */
+export const getConnectionTypeMismatchMessage = (connection) => {
+  if (!connection?.sourceHandle || !connection?.targetHandle) return null;
+  const sourceType = getHandleDataType(connection.sourceHandle);
+  const targetType = getHandleDataType(connection.targetHandle);
+  if (isTypeCompatible(sourceType, targetType)) return null;
+  return `Cannot connect '${sourceType}' → '${targetType}'`;
+};
+
+/**
  * Single entry point for React Flow's `isValidConnection`. Rejects
- * self-connections, duplicate target handles, and cycle-forming edges.
+ * self-connections, duplicate target handles, cycle-forming edges, and
+ * incompatible data-type pairings.
  * @param {EdgeLike[]} edges
  * @param {ConnectionLike} connection
  * @returns {boolean}
@@ -95,5 +165,13 @@ export const isValidConnection = (edges, connection) => {
   if (isSelfConnection(connection)) return false;
   if (isDuplicateConnection(edges, connection)) return false;
   if (wouldCreateCycle(edges, connection)) return false;
+
+  const sourceType = getHandleDataType(connection.sourceHandle);
+  const targetType = getHandleDataType(connection.targetHandle);
+  if (!isTypeCompatible(sourceType, targetType)) {
+    console.warn(`[Type Mismatch] Cannot connect '${sourceType}' → '${targetType}'`);
+    return false;
+  }
+
   return true;
 };

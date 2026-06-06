@@ -31,7 +31,7 @@ export const SubmitButton = () => {
       const { num_nodes: numNodes, num_edges: numEdges, is_dag: isDag } = result;
 
       toast.success('Pipeline parsed successfully', {
-        description: `Nodes: ${numNodes}, Edges: ${numEdges}, Is DAG: ${isDag}`,
+        description: `Nodes: ${numNodes} · Edges: ${numEdges} · Valid DAG: ${isDag ? 'Yes' : 'No'}`,
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';

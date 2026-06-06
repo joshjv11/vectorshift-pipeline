@@ -8,14 +8,14 @@ import { computeTextNodeWidth, parseTextVariables } from './textVariables';
 import { useNodeField } from '../hooks/useNodeField';
 
 export const TextNode = ({ id, data }) => {
-  const updateNodeField = useStore((state) => state.updateNodeField);
+  const setTextNodeVariables = useStore((state) => state.setTextNodeVariables);
   const [currText, setCurrText] = useNodeField(id, 'text', data?.text || '{{input}}');
 
   const variables = useMemo(() => parseTextVariables(currText), [currText]);
 
   useEffect(() => {
-    updateNodeField(id, 'variables', variables);
-  }, [id, variables, updateNodeField]);
+    setTextNodeVariables(id, variables);
+  }, [id, variables, setTextNodeVariables]);
 
   const handles = useMemo(() => {
     const targetHandles = variables.map((variable, index) => ({

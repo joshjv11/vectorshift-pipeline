@@ -38,7 +38,7 @@ export const OutputNode = ({ id, data }) => {
         <span className={fieldLabelClass}>Type</span>
         <select value={outputType} onChange={(e) => setOutputType(e.target.value)} className={selectClass}>
           <option value="Text">Text</option>
-          <option value="File">Image</option>
+          <option value="Image">Image</option>
         </select>
       </label>
     </BaseNode>

@@ -2,6 +2,13 @@ import logging
 import os
 import time
 import traceback
+from pathlib import Path
+
+# Load .env from the repo root so the server always has fresh API keys even
+# when the process was started before the .env was written. override=True
+# ensures a running server picks up key changes on the next --reload cycle.
+from dotenv import load_dotenv
+load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env", override=True)
 
 import groq as groq_sdk
 from google import genai

@@ -37,7 +37,15 @@ test('shows a success toast for a valid DAG', async () => {
   seedNode();
   global.fetch = jest.fn().mockResolvedValue({
     ok: true,
-    json: async () => ({ num_nodes: 1, num_edges: 0, is_dag: true, cycle_path: null }),
+    json: async () => ({
+      num_nodes: 1,
+      num_edges: 0,
+      is_dag: true,
+      cycle_path: null,
+      execution_tiers: [['a']],
+      critical_path: ['a'],
+      total_latency_ms: 1,
+    }),
   });
 
   render(<SubmitButton />);
@@ -48,7 +56,7 @@ test('shows a success toast for a valid DAG', async () => {
   expect(opts.description).toContain('DAG: Yes');
 });
 
-test('warns and names the cycle when the graph is cyclic', async () => {
+test('errors and names the cycle when the graph is cyclic', async () => {
   seedNode();
   global.fetch = jest.fn().mockResolvedValue({
     ok: true,
@@ -57,14 +65,17 @@ test('warns and names the cycle when the graph is cyclic', async () => {
       num_edges: 2,
       is_dag: false,
       cycle_path: ['a', 'b', 'a'],
+      execution_tiers: [],
+      critical_path: [],
+      total_latency_ms: 0,
     }),
   });
 
   render(<SubmitButton />);
   fireEvent.click(screen.getByRole('button'));
 
-  await waitFor(() => expect(toast.warning).toHaveBeenCalledTimes(1));
-  const [, opts] = toast.warning.mock.calls[0];
+  await waitFor(() => expect(toast.error).toHaveBeenCalledTimes(1));
+  const [, opts] = toast.error.mock.calls[0];
   expect(opts.description).toContain('a → b → a');
 });
 

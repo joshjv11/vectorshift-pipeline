@@ -180,6 +180,9 @@ def test_parse_empty_pipeline():
         "node_type_counts": {},
         "entry_points": [],
         "exit_points": [],
+        "execution_tiers": [],
+        "critical_path": [],
+        "total_latency_ms": 0,
     }
 
 

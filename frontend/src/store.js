@@ -232,6 +232,46 @@ export const useStore = create(
         set({ nodes: newNodes, edges: newEdges, nodeIDs: newNodeIDs });
       },
 
+      animateCycleError: (cyclePath) => {
+        if (!cyclePath || cyclePath.length === 0) return;
+
+        const { nodes, edges } = get();
+        const cycleNodeSet = new Set(cyclePath);
+
+        // Build the set of edges that are part of the cycle
+        const cycleEdgeSet = new Set();
+        for (let i = 0; i < cyclePath.length - 1; i++) {
+          cycleEdgeSet.add(`${cyclePath[i]}→${cyclePath[i + 1]}`);
+        }
+
+        const snapshotNodes = nodes.map(n => ({ ...n }));
+        const snapshotEdges = edges.map(e => ({ ...e }));
+
+        useStore.temporal.getState().pause();
+
+        const restore = () => {
+          set({ nodes: snapshotNodes, edges: snapshotEdges });
+          useStore.temporal.getState().resume();
+        };
+
+        set({
+          nodes: nodes.map(n => ({
+            ...n,
+            style: cycleNodeSet.has(n.id)
+              ? { ...n.style, opacity: 1, boxShadow: '0 0 20px 4px rgba(239, 68, 68, 0.7)', border: '2px solid #ef4444' }
+              : { ...n.style, opacity: 0.2 },
+          })),
+          edges: edges.map(e => {
+            const key = `${e.source}→${e.target}`;
+            return cycleEdgeSet.has(key)
+              ? { ...e, animated: true, style: { stroke: '#ef4444', strokeWidth: 4, filter: 'drop-shadow(0 0 6px #ef4444)', opacity: 1 } }
+              : { ...e, animated: false, style: { stroke: '#e2e8f0', strokeWidth: 1, opacity: 0.1 } };
+          }),
+        });
+
+        setTimeout(restore, 4000);
+      },
+
       animateTopologicalSort: async (executionTiers, criticalPath) => {
         const { nodes, edges } = get();
         if (!executionTiers || executionTiers.length === 0) return;

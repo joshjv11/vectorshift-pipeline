@@ -2,7 +2,6 @@ import { create, useStore as _useZustandStore } from "zustand";
 import { persist } from "zustand/middleware";
 import { temporal } from 'zundo';
 import { addEdge, applyNodeChanges, applyEdgeChanges, MarkerType } from 'reactflow';
-import { toast } from 'sonner';
 import { isValidConnection } from './graph';
 import { getLayoutedElements } from './autoLayout';
 

@@ -8,7 +8,7 @@ cd "${ROOT}"
 # If frontend dependencies are missing, silently install them
 if [ ! -d "${ROOT}/frontend/node_modules" ]; then
   echo "📦 Frontend dependencies missing. Auto-installing now..."
-  npm install --prefix frontend --silent
+  npm install --prefix frontend
 fi
 
 # Auto-bootstrap .env from .env.example on first clone

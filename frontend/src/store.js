@@ -391,27 +391,52 @@ export const useStore = create(
   {
     limit: 50,
 
-    // Only snapshot the canvas data — skip nodeIDs, action functions, and
-    // all other derived state. Cuts clone size by ~80%, which is the main
-    // reason undo/redo felt sluggish.
-    partialize: (state) => ({ nodes: state.nodes, edges: state.edges }),
+    // Only snapshot canvas topology — skip nodeIDs, functions, and UI-only
+    // fields (selected, measured/dimensions) that should never be undoable.
+    partialize: (state) => ({
+      nodes: state.nodes.map(({ id, type, position, data, parentId, extent, style, zIndex }) => ({
+        id, type, position, data, parentId, extent, style, zIndex,
+      })),
+      edges: state.edges,
+    }),
 
-    // Reference equality: zustand always creates new array references when
-    // nodes or edges change, so this O(1) check reliably skips no-op sets
-    // (e.g. animation ticks, simulateExecution styling) without deep diffing.
-    equality: (a, b) => a.nodes === b.nodes && a.edges === b.edges,
+    // Structural equality: ignore React-Flow-only mutations (select, measure)
+    // that create new array refs without meaningful pipeline changes. We do an
+    // O(n) per-node check so that position drags ARE captured while deselect
+    // clicks and dimension measurements are silently skipped.
+    equality: (a, b) => {
+      if (a.edges !== b.edges) return false;
+      if (a.nodes.length !== b.nodes.length) return false;
+      return a.nodes.every((n, i) => {
+        const bn = b.nodes[i];
+        return (
+          n.id       === bn.id       &&
+          n.type     === bn.type     &&
+          n.parentId === bn.parentId &&
+          n.extent   === bn.extent   &&
+          n.style    === bn.style    &&
+          n.zIndex   === bn.zIndex   &&
+          n.data     === bn.data     &&
+          n.position?.x === bn.position?.x &&
+          n.position?.y === bn.position?.y
+        );
+      });
+    },
 
-    // Throttle snapshot recording to 100 ms so rapid position-change events
-    // emitted during node dragging collapse into a single undo step instead
-    // of flooding the history stack with one entry per mouse-move frame.
+    // Debounce snapshot recording to 300 ms and capture the FIRST pastState
+    // seen in the window (state before the drag started) so that Undo
+    // restores the full pre-drag position rather than a mid-drag frame.
     handleSet: (handleSet) => {
-      let timer = null;
+      let timer     = null;
+      let firstArgs = null;
       return (...args) => {
+        if (!firstArgs) firstArgs = args;
         if (timer) clearTimeout(timer);
         timer = setTimeout(() => {
-          handleSet(...args);
-          timer = null;
-        }, 100);
+          handleSet(...firstArgs);
+          timer     = null;
+          firstArgs = null;
+        }, 300);
       };
     },
   }

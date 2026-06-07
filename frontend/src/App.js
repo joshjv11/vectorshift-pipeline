@@ -7,6 +7,7 @@ import { CostAnalyzerHUD } from './CostAnalyzer';
 import { PipelineToolbar } from './toolbar';
 import { PipelineUI } from './ui';
 import { SubmitButton } from './submit';
+import { Tutorial } from './Tutorial';
 
 const NAV_LINKS = [
   { label: 'Workflows',   active: true,  action: () => window.dispatchEvent(new CustomEvent('open-dashboard')) },
@@ -17,6 +18,7 @@ const NAV_LINKS = [
 
 function App() {
   const [navOpen, setNavOpen] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(true);
   const hasNodes = useStore((s) => s.nodes.length > 0);
 
   return (
@@ -116,6 +118,7 @@ function App() {
 
       <Chatbot />
       <Toaster position="bottom-center" richColors closeButton />
+      {showTutorial && <Tutorial onClose={() => setShowTutorial(false)} />}
     </div>
   );
 }

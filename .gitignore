@@ -8,9 +8,10 @@
 # Generated ingest output
 ingest/
 
-# Environment
+# Environment — ignore real secrets, but commit the example template
 .env
 .env.*
+!.env.example
 
 # Dependencies
 node_modules/

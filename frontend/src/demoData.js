@@ -80,4 +80,32 @@ export const TEMPLATES = [
       { ...mkEdge('#c084fc'), id: 'e3', source: 'groqLlm-1',      target: 'customOutput-1', sourceHandle: 'groqLlm-1-response',      targetHandle: 'customOutput-1-value'  },
     ],
   },
+
+  // --- ANTI-PATTERN TESTS (DAG validation demo) ---
+  {
+    id: 'deadlock-test',
+    name: 'Test: Infinite Loop',
+    icon: '🚨',
+    description: 'Anti-pattern: two LLMs passing data to each other forever. Bypasses frontend guards to simulate a corrupted import.',
+    nodes: [
+      { id: 'groqLlm-1', type: 'groqLlm', position: { x: 0, y: 0 }, data: { id: 'groqLlm-1', nodeType: 'groqLlm', model: 'llama-3.1-8b-instant', temperature: 0.7 } },
+      { id: 'groqLlm-2', type: 'groqLlm', position: { x: 0, y: 0 }, data: { id: 'groqLlm-2', nodeType: 'groqLlm', model: 'llama-3.1-8b-instant', temperature: 0.7 } },
+    ],
+    edges: [
+      { ...mkEdge('#c084fc'), id: 'e1', source: 'groqLlm-1', target: 'groqLlm-2', sourceHandle: 'groqLlm-1-response', targetHandle: 'groqLlm-2-prompt' },
+      { ...mkEdge('#c084fc'), id: 'e2', source: 'groqLlm-2', target: 'groqLlm-1', sourceHandle: 'groqLlm-2-response', targetHandle: 'groqLlm-1-prompt' },
+    ],
+  },
+  {
+    id: 'self-loop-test',
+    name: 'Test: Self-Loop Paradox',
+    icon: '⚠️',
+    description: 'Anti-pattern: a Text node feeding its own output back into its own variable input — an unsolvable paradox.',
+    nodes: [
+      { id: 'text-1', type: 'text', position: { x: 0, y: 0 }, data: { id: 'text-1', nodeType: 'text', text: 'Generate an idea from {{idea}}', variables: ['idea'] } },
+    ],
+    edges: [
+      { ...mkEdge('#60a5fa'), id: 'e1', source: 'text-1', target: 'text-1', sourceHandle: 'text-1-output', targetHandle: 'text-1-idea' },
+    ],
+  },
 ];

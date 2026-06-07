@@ -119,6 +119,7 @@ export function Chatbot() {
 
   const [isOpen,      setIsOpen]      = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isExpanded,  setIsExpanded]  = useState(false);
   const [messages,    setMessages]    = useState([INITIAL_MESSAGE]);
   const [input,       setInput]       = useState('');
   const [isLoading,   setIsLoading]   = useState(false);
@@ -233,7 +234,10 @@ export function Chatbot() {
       {isOpen && (
         <div
           className="mb-4 flex flex-col overflow-hidden rounded-md border border-hairline bg-surface shadow-xl transition-all duration-200"
-          style={{ width: 340, height: isMinimized ? 'auto' : 480 }}
+          style={{
+            width:  isExpanded ? 600 : 340,
+            height: isMinimized ? 'auto' : isExpanded ? 680 : 480,
+          }}
         >
           {/* Header */}
           <div className="flex items-center justify-between border-b border-hairline bg-canvas px-4 py-3">
@@ -256,6 +260,25 @@ export function Chatbot() {
                   Clear
                 </button>
               )}
+              {!isMinimized && (
+                <button
+                  onClick={() => setIsExpanded((v) => !v)}
+                  title={isExpanded ? 'Compact view' : 'Expand'}
+                  className="flex h-6 w-6 items-center justify-center rounded text-muted transition-colors hover:text-ink hover:bg-white/5"
+                >
+                  {isExpanded ? (
+                    /* compress icon */
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5">
+                      <path fillRule="evenodd" d="M3.28 2.22a.75.75 0 00-1.06 1.06L5.44 6.5H3.75a.75.75 0 000 1.5h3.5A.75.75 0 008 7.25v-3.5a.75.75 0 00-1.5 0v1.69L3.28 2.22zm13.44 0a.75.75 0 011.06 1.06L14.56 6.5h1.69a.75.75 0 010 1.5h-3.5A.75.75 0 0112 7.25v-3.5a.75.75 0 011.5 0v1.69l3.22-3.22zM3.28 17.78a.75.75 0 01-1.06-1.06l3.22-3.22H3.75a.75.75 0 010-1.5h3.5A.75.75 0 018 12.75v3.5a.75.75 0 01-1.5 0v-1.69l-3.22 3.22zm13.44 0a.75.75 0 001.06-1.06l-3.22-3.22h1.69a.75.75 0 000-1.5h-3.5a.75.75 0 00-.75.75v3.5a.75.75 0 001.5 0v-1.69l3.22 3.22z" clipRule="evenodd" />
+                    </svg>
+                  ) : (
+                    /* expand icon */
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5">
+                      <path fillRule="evenodd" d="M3.28 2.22a.75.75 0 010 1.06L6.5 6.5H4.75a.75.75 0 000 1.5h3.5A.75.75 0 009 7.25v-3.5a.75.75 0 00-1.5 0v1.75L4.34 2.34a.75.75 0 00-1.06-.12zm13.44 0a.75.75 0 010 1.06L13.5 6.5h1.75a.75.75 0 010 1.5h-3.5A.75.75 0 0111 7.25v-3.5a.75.75 0 011.5 0v1.75l3.16-3.16a.75.75 0 011.06-.12zM3.28 17.78a.75.75 0 010-1.06L6.5 13.5H4.75a.75.75 0 010-1.5h3.5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-1.75l-3.16 3.16a.75.75 0 01-1.06-.12zm13.44 0a.75.75 0 010-1.06L13.5 13.5h1.75a.75.75 0 010-1.5h-3.5a.75.75 0 00-.75.75v3.5a.75.75 0 001.5 0v-1.75l3.16 3.16a.75.75 0 001.06-.12z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </button>
+              )}
               <button
                 onClick={() => setIsMinimized((v) => !v)}
                 title={isMinimized ? 'Restore' : 'Minimise'}
@@ -272,7 +295,7 @@ export function Chatbot() {
                 )}
               </button>
               <button
-                onClick={() => { setIsOpen(false); setIsMinimized(false); }}
+                onClick={() => { setIsOpen(false); setIsMinimized(false); setIsExpanded(false); }}
                 title="Close"
                 className="flex h-6 w-6 items-center justify-center rounded text-muted transition-colors hover:text-ink hover:bg-white/5 text-sm leading-none"
               >
